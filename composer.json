@@ -1,0 +1,27 @@
+{
+    "name": "negreanucalin/sparkle-dto",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Negreanu Calin",
+            "email": "negreanu0calin@gmail.com"
+        }
+    ],
+	"autoload": {
+		"psr-4": {
+			"SparkleDTO\\": "src/"
+		}
+	},
+    "autoload-dev": {
+        "psr-4": {
+            "SparkleDTO\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "8.*"
+    },
+    "require-dev": {
+      "phpunit/phpunit": "9.5.10"
+    }
+}
