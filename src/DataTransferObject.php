@@ -2,7 +2,8 @@
 
 namespace SparkleDTO;
 
-use SparkleDTO\Exceptions\UndefinedDTOProperty;
+use SparkleDTO\Exceptions\ConfigurationException;
+use SparkleDTO\Exceptions\UndefinedProperty;
 use SparkleDTO\Traits\AliasTrait;
 use SparkleDTO\Traits\ArrayTrait;
 use SparkleDTO\Traits\CastTrait;
@@ -21,13 +22,22 @@ class DataTransferObject implements ArrayAccess
      */
     private $hiddenData = [];
 
+    /**
+     * @var array
+     */
+    protected $fillable = [];
+
     use AliasTrait;
     use CastTrait;
     use ComputedTrait;
     use ArrayTrait;
 
+    /**
+     * @param $arguments
+     */
     public function __construct($arguments)
     {
+        $this->validateConfiguration();
         $this->assignData(
             $this->getAliasedData($arguments)
         );
@@ -35,19 +45,31 @@ class DataTransferObject implements ArrayAccess
         $this->calculateComputedProperties();
     }
 
+    /**
+     * @throws ConfigurationException
+     */
+    private function validateConfiguration()
+    {
+        if (count($this->hidden) && count($this->fillable)) {
+            throw new ConfigurationException('Hidden attributes and fillable defined, choose one strategy');
+        }
+    }
+
     private function assignData($data)
     {
         foreach ($data as $property=>$value) {
-            if (in_array($property, $this->hidden)) {
+            if (count($this->hidden) && in_array($property, $this->hidden)) {
                 $this->hiddenData[$property] = $value;
             } else {
-                $this->{$property} = $value;
+                if ((count($this->fillable) && in_array($property, $this->fillable)) || empty($this->fillable)) {
+                    $this->{$property} = $value;
+                }
             }
         }
     }
 
     /**
-     * @throws UndefinedDTOProperty
+     * @throws UndefinedProperty
      */
     public function __get($name)
     {
@@ -58,7 +80,7 @@ class DataTransferObject implements ArrayAccess
             return $this->hiddenData[$name];
         }
 
-        throw new UndefinedDTOProperty('Undefined property: ' . $name);
+        throw new UndefinedProperty('Undefined property: ' . $name);
     }
 
     public function __set($property, $value)

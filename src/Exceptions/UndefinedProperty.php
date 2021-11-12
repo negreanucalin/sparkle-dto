@@ -2,7 +2,7 @@
 
 namespace SparkleDTO\Exceptions;
 
-class UndefinedDTOProperty extends \Exception
+class UndefinedProperty extends \Exception
 {
 
 }

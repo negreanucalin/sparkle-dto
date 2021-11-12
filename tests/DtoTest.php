@@ -3,12 +3,15 @@
 namespace SparkleDTO\Tests;
 
 use SparkleDTO\DataTransferObject;
-use SparkleDTO\Exceptions\UndefinedDTOProperty;
+use SparkleDTO\Exceptions\ConfigurationException;
+use SparkleDTO\Exceptions\UndefinedProperty;
 use PHPUnit\Framework\TestCase;
 use SparkleDTO\Tests\Data\DtoRelations;
 use SparkleDTO\Tests\Data\DtoRelationUsers;
 use SparkleDTO\Tests\Data\DtoWithAlias;
 use SparkleDTO\Tests\Data\DtoWithAliasComputed;
+use SparkleDTO\Tests\Data\DtoWithFillable;
+use SparkleDTO\Tests\Data\DtoWithFillableAndHidden;
 use SparkleDTO\Tests\Data\DtoWithHidden;
 
 class DtoTest extends TestCase
@@ -29,7 +32,7 @@ class DtoTest extends TestCase
 
     public function test_aliased()
     {
-        $this->expectException(UndefinedDTOProperty::class);
+        $this->expectException(UndefinedProperty::class);
         $expectedData = ['a' => 1, 'c' => 2];
         $dto = new DtoWithAlias(['a' => 1, 'b' => 2]);
         $this->assertEquals(json_encode($expectedData), (string)$dto);
@@ -125,5 +128,33 @@ class DtoTest extends TestCase
         $this->assertArrayHasKey('b', $dto);
         $this->assertArrayHasKey('c', $dto);
         $this->assertArrayNotHasKey('a', $dto);
+    }
+
+    public function test_fillable_properties()
+    {
+        $dto = new DtoWithFillable([
+            'prop1'=>1,
+            'prop2'=>2,
+            'prop3'=>3,
+            'prop4'=>4,
+            'prop5'=>5,
+        ]);
+        $this->assertArrayHasKey('prop1', $dto);
+        $this->assertArrayHasKey('prop2', $dto);
+        $this->assertArrayHasKey('prop3', $dto);
+        $this->assertArrayNotHasKey('prop4', $dto);
+        $this->assertArrayNotHasKey('prop5', $dto);
+    }
+
+    public function test_fillable_hidden_exception()
+    {
+        $this->expectException(ConfigurationException::class);
+        new DtoWithFillableAndHidden([
+            'prop1'=>1,
+            'prop2'=>2,
+            'prop3'=>3,
+            'prop4'=>4,
+            'prop5'=>5,
+        ]);
     }
 }
