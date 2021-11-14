@@ -6,6 +6,7 @@ use SparkleDTO\Exceptions\ConfigurationException;
 use PHPUnit\Framework\TestCase;
 use SparkleDTO\Tests\Data\DtoWithFillableAndHidden;
 use SparkleDTO\Tests\Data\DtoWithHidden;
+use SparkleDTO\Tests\Data\DtoWithUndefinedHidden;
 
 class DtoHiddenTest extends TestCase
 {
@@ -30,5 +31,11 @@ class DtoHiddenTest extends TestCase
             'prop4'=>4,
             'prop5'=>5,
         ]);
+    }
+
+    public function test_undefined_hidden()
+    {
+        $dto = new DtoWithUndefinedHidden(['b'=>1]);
+        $this->assertArrayHasKey('b', $dto);
     }
 }
