@@ -15,7 +15,6 @@ class DtoHiddenTest extends TestCase
         // We let the user still access hidden data
         // To not allow him we will need to set data as protected
         // And exclude from serialization
-        $fail = $dto->a;
         $this->assertArrayHasKey('b', $dto);
         $this->assertArrayHasKey('c', $dto);
         $this->assertArrayNotHasKey('a', $dto);

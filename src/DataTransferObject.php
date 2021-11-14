@@ -2,6 +2,7 @@
 
 namespace SparkleDTO;
 
+use JsonSerializable;
 use SparkleDTO\Exceptions\ConfigurationException;
 use SparkleDTO\Exceptions\UndefinedProperty;
 use SparkleDTO\Traits\AliasTrait;
@@ -10,12 +11,18 @@ use SparkleDTO\Traits\CastTrait;
 use SparkleDTO\Traits\ComputedTrait;
 use ArrayAccess;
 
-class DataTransferObject implements ArrayAccess
+class DataTransferObject implements ArrayAccess, JsonSerializable
+
 {
     /**
      * @var array
      */
     protected $hidden = [];
+
+    /**
+     * @var array
+     */
+    protected $data = [];
 
     /**
      * @var array
@@ -26,22 +33,6 @@ class DataTransferObject implements ArrayAccess
      * @var array
      */
     protected $fillable = [];
-
-    /**
-     * @var array
-     */
-    protected $casts = [];
-
-    private $castMap = [
-        'bool'=>'boolean',
-        'boolean'=>'boolean',
-        'int'=>'int',
-        'integer'=>'int',
-        'array'=>'array',
-        'float'=>'float',
-        'str'=>'string',
-        'string'=>'string',
-    ];
 
     use AliasTrait;
     use CastTrait;
@@ -58,7 +49,35 @@ class DataTransferObject implements ArrayAccess
             $this->getAliasedData($arguments)
         );
         $this->calculateCasts();
-        $this->calculateComputedProperties();
+    }
+
+    /**
+     * @throws UndefinedProperty
+     */
+    public function __get($property)
+    {
+        if (isset($this->data[$property])) {
+            return $this->data[$property];
+        }
+        if (isset($this->hiddenData[$property])) {
+            return $this->hiddenData[$property];
+        }
+        throw new UndefinedProperty('Undefined property: ' . $property);
+    }
+
+    public function __set($property, $value)
+    {
+        if ($this->isHidden($property)) {
+            $this->hiddenData[$property] = $this->castIfPrimitive($property, $value);
+        } else if ($this->canBeFilled($property)) {
+            $this->data[$property] = $this->castIfPrimitive($property, $value);
+        }
+        try {
+            $this->calculateComputedProperties();
+        } catch (UndefinedProperty $e) {
+            // Ignore exception if setting first property
+            // and invoking a computed property
+        }
     }
 
     /**
@@ -73,48 +92,12 @@ class DataTransferObject implements ArrayAccess
 
     private function assignData($data)
     {
+        // Trigger magit method __set() which solves casting
         foreach ($data as $property => $value) {
             $this->{$property} = $value;
         }
     }
 
-    /**
-     * @param string $propertyName
-     * @param mixed $value
-     * @return mixed
-     */
-    private function castIfPrimitive(string $propertyName, mixed $value): mixed
-    {
-        // Is defined as primitive
-        if (isset($this->casts[$propertyName]) && isset($this->castMap[$this->casts[$propertyName]])) {
-            settype($value, $this->castMap[$this->casts[$propertyName]]);
-        }
-        return $value;
-    }
-
-    /**
-     * @throws UndefinedProperty
-     */
-    public function __get($name)
-    {
-        if (isset($this->{$name})) {
-            return $this->{$name};
-        }
-        if (isset($this->hiddenData[$name])) {
-            return $this->hiddenData[$name];
-        }
-
-        throw new UndefinedProperty('Undefined property: ' . $name);
-    }
-
-    public function __set($property, $value)
-    {
-        if ($this->isHidden($property)) {
-            $this->hiddenData[$property] = $this->castIfPrimitive($property, $value);
-        } else if ($this->canBeFilled($property)) {
-            $this->{$property} = $this->castIfPrimitive($property, $value);
-        }
-    }
 
     private function isHidden($property): bool
     {
@@ -128,6 +111,11 @@ class DataTransferObject implements ArrayAccess
 
     public function __toString()
     {
-        return json_encode($this);
+        return json_encode($this->data);
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->data;
     }
 }

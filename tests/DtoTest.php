@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use SparkleDTO\Tests\Data\DtoRelations;
 use SparkleDTO\Tests\Data\DtoRelationUsers;
 use SparkleDTO\Tests\Data\DtoWithAlias;
-use SparkleDTO\Tests\Data\DtoWithAliasComputed;
 use SparkleDTO\Tests\Data\DtoWithFillable;
 
 class DtoTest extends TestCase
@@ -29,11 +28,15 @@ class DtoTest extends TestCase
 
     public function test_aliased()
     {
-        $this->expectException(UndefinedProperty::class);
         $expectedData = ['a' => 1, 'c' => 2];
         $dto = new DtoWithAlias(['a' => 1, 'b' => 2]);
         $this->assertEquals(json_encode($expectedData), (string)$dto);
         $this->assertEquals(2, $dto->c);
+    }
+
+    public function test_aliased_exception() {
+        $this->expectException(UndefinedProperty::class);
+        $dto = new DtoWithAlias(['a' => 1, 'b' => 2]);
         $fail = $dto->b; // Exception
     }
 
