@@ -27,6 +27,22 @@ class DataTransferObject implements ArrayAccess
      */
     protected $fillable = [];
 
+    /**
+     * @var array
+     */
+    protected $casts = [];
+
+    private $castMap = [
+        'bool'=>'boolean',
+        'boolean'=>'boolean',
+        'int'=>'int',
+        'integer'=>'int',
+        'array'=>'array',
+        'float'=>'float',
+        'str'=>'string',
+        'string'=>'string',
+    ];
+
     use AliasTrait;
     use CastTrait;
     use ComputedTrait;
@@ -57,15 +73,23 @@ class DataTransferObject implements ArrayAccess
 
     private function assignData($data)
     {
-        foreach ($data as $property=>$value) {
-            if (count($this->hidden) && in_array($property, $this->hidden)) {
-                $this->hiddenData[$property] = $value;
-            } else {
-                if ((count($this->fillable) && in_array($property, $this->fillable)) || empty($this->fillable)) {
-                    $this->{$property} = $value;
-                }
-            }
+        foreach ($data as $property => $value) {
+            $this->{$property} = $value;
         }
+    }
+
+    /**
+     * @param string $propertyName
+     * @param mixed $value
+     * @return mixed
+     */
+    private function castIfPrimitive(string $propertyName, mixed $value): mixed
+    {
+        // Is defined as primitive
+        if (isset($this->casts[$propertyName]) && isset($this->castMap[$this->casts[$propertyName]])) {
+            settype($value, $this->castMap[$this->casts[$propertyName]]);
+        }
+        return $value;
     }
 
     /**
@@ -85,20 +109,25 @@ class DataTransferObject implements ArrayAccess
 
     public function __set($property, $value)
     {
-        if (in_array($property, $this->hidden)) {
-            $this->hiddenData[$property] = $value;
-        } else {
-            $this->{$property} = $value;
+        if ($this->isHidden($property)) {
+            $this->hiddenData[$property] = $this->castIfPrimitive($property, $value);
+        } else if ($this->canBeFilled($property)) {
+            $this->{$property} = $this->castIfPrimitive($property, $value);
         }
+    }
+
+    private function isHidden($property): bool
+    {
+        return in_array($property, $this->hidden);
+    }
+
+    private function canBeFilled($property): bool
+    {
+        return (count($this->fillable) && in_array($property, $this->fillable)) || empty($this->fillable);
     }
 
     public function __toString()
     {
         return json_encode($this);
-    }
-
-    public function hasProperty($string)
-    {
-        return property_exists($this,$string);
     }
 }

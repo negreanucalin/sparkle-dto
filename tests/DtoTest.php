@@ -3,7 +3,6 @@
 namespace SparkleDTO\Tests;
 
 use SparkleDTO\DataTransferObject;
-use SparkleDTO\Exceptions\ConfigurationException;
 use SparkleDTO\Exceptions\UndefinedProperty;
 use PHPUnit\Framework\TestCase;
 use SparkleDTO\Tests\Data\DtoRelations;
@@ -11,8 +10,6 @@ use SparkleDTO\Tests\Data\DtoRelationUsers;
 use SparkleDTO\Tests\Data\DtoWithAlias;
 use SparkleDTO\Tests\Data\DtoWithAliasComputed;
 use SparkleDTO\Tests\Data\DtoWithFillable;
-use SparkleDTO\Tests\Data\DtoWithFillableAndHidden;
-use SparkleDTO\Tests\Data\DtoWithHidden;
 
 class DtoTest extends TestCase
 {
@@ -51,12 +48,6 @@ class DtoTest extends TestCase
         $this->assertEquals(json_encode($expectedData), (string)$dto[1]);
     }
 
-    public function test_computed()
-    {
-        $dto = new DtoWithAliasComputed(['a' => 1, 'b' => 2]);
-        $this->assertEquals(12, (string)$dto->some_name);
-    }
-
     public function test_relations()
     {
         $dto = new DtoRelations(['users' => [['name' => 'calin'], ['name' => 'elena']]]);
@@ -69,13 +60,8 @@ class DtoTest extends TestCase
     public function test_dynamic_set()
     {
         $dto = new DtoRelations(['users' => [['name' => 'calin'], ['name' => 'elena']]]);
-        $dto->something = ['x'=>1];
-        $this->assertEquals(['x'=>1], $dto->something);
-    }
-
-    public function test_dynamic_set_recalculate_computed()
-    {
-        $this->markTestSkipped('To implement: Recompute if data changes?');
+        $dto->something = ['x' => 1];
+        $this->assertEquals(['x' => 1], $dto->something);
     }
 
     public function test_relations_single()
@@ -83,7 +69,7 @@ class DtoTest extends TestCase
         $dto = new DtoRelations(
             [
                 'users' => [['name' => 'calin'], ['name' => 'elena']],
-                'single'=>['users'=>[['name' => 'calin2'], ['name' => 'elena2']]]
+                'single' => ['users' => [['name' => 'calin2'], ['name' => 'elena2']]]
             ]);
         $this->assertTrue(is_array($dto->users));
         $this->assertTrue(is_array($dto['users']));
@@ -107,7 +93,7 @@ class DtoTest extends TestCase
                             ['name' => 'calin2'],
                             ['name' => 'elena2']
                         ],
-                        'children'=>[]
+                        'children' => []
                     ]
                 ]
             ]
@@ -118,43 +104,19 @@ class DtoTest extends TestCase
         $this->assertEquals('calin2', $dto->children[0]->users[0]->name);
     }
 
-    public function test_hidden_attributes()
-    {
-        $dto = new DtoWithHidden(['a'=>1, 'b'=>2]);
-        // We let the user still access hidden data
-        // To not allow him we will need to set data as protected
-        // And exclude from serialization
-        $fail = $dto->a;
-        $this->assertArrayHasKey('b', $dto);
-        $this->assertArrayHasKey('c', $dto);
-        $this->assertArrayNotHasKey('a', $dto);
-    }
-
     public function test_fillable_properties()
     {
         $dto = new DtoWithFillable([
-            'prop1'=>1,
-            'prop2'=>2,
-            'prop3'=>3,
-            'prop4'=>4,
-            'prop5'=>5,
+            'prop1' => 1,
+            'prop2' => 2,
+            'prop3' => 3,
+            'prop4' => 4,
+            'prop5' => 5,
         ]);
         $this->assertArrayHasKey('prop1', $dto);
         $this->assertArrayHasKey('prop2', $dto);
         $this->assertArrayHasKey('prop3', $dto);
         $this->assertArrayNotHasKey('prop4', $dto);
         $this->assertArrayNotHasKey('prop5', $dto);
-    }
-
-    public function test_fillable_hidden_exception()
-    {
-        $this->expectException(ConfigurationException::class);
-        new DtoWithFillableAndHidden([
-            'prop1'=>1,
-            'prop2'=>2,
-            'prop3'=>3,
-            'prop4'=>4,
-            'prop5'=>5,
-        ]);
     }
 }

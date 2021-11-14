@@ -9,18 +9,18 @@ trait AliasTrait
      */
     protected $alias = [];
 
-    protected function getAliasedData(array $func_get_args)
+    protected function getAliasedData(array $arguments)
     {
         if (empty($this->alias)) {
-            return $func_get_args;
+            return $arguments;
         }
 
         foreach ($this->alias as $aliasIn => $aliasOut) {
-            if (isset($func_get_args[$aliasIn])) {
-                $func_get_args[$aliasOut] = $func_get_args[$aliasIn];
-                unset($func_get_args[$aliasIn]);
+            if (isset($arguments[$aliasIn])) {
+                $arguments[$aliasOut] = $arguments[$aliasIn];
+                unset($arguments[$aliasIn]);
             }
         }
-        return $func_get_args;
+        return $arguments;
     }
 }
