@@ -54,22 +54,23 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
 
     private function appendEmptyFillable($propertyMap): array
     {
-        $difference = array_diff($this->fillable,array_keys($propertyMap));
+        $difference = array_diff(array_merge($this->fillable, array_keys($this->casts)), array_keys($propertyMap));
         foreach ($difference as $missingKey) {
-            $propertyMap[$missingKey] = '';
+            $propertyMap[$missingKey] = null;
         }
         return $propertyMap;
     }
 
-    public function __get($property)
+    public function &__get($property)
     {
+        $value = null;
         if (isset($this->data[$property])) {
-            return $this->data[$property];
+            $value = $this->data[$property];
         }
         if (isset($this->hiddenData[$property])) {
-            return $this->hiddenData[$property];
+            $value = $this->hiddenData[$property];
         }
-        return null;
+        return $value;
     }
 
     public function __set($property, $value)

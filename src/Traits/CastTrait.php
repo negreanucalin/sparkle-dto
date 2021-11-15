@@ -10,14 +10,14 @@ trait CastTrait
     protected $casts = [];
 
     private $castMap = [
-        'bool'=>'boolean',
-        'boolean'=>'boolean',
-        'int'=>'int',
-        'integer'=>'int',
-        'array'=>'array',
-        'float'=>'float',
-        'str'=>'string',
-        'string'=>'string',
+        'bool' => 'boolean',
+        'boolean' => 'boolean',
+        'int' => 'int',
+        'integer' => 'int',
+        'array' => 'array',
+        'float' => 'float',
+        'str' => 'string',
+        'string' => 'string',
     ];
 
     /**
@@ -39,9 +39,17 @@ trait CastTrait
         foreach ($this->casts as $property => $classCast) {
             if (is_subclass_of($classCast, self::class) && isset($this->data[$property])) {
                 if ($this->isSingle($this->{$property})) {
-                    $this->{$property} = new $classCast($this->{$property});
+                    if ($this->isHidden($property)) {
+                        $this->hiddenData[$property] = new $classCast($this->{$property});
+                    } else {
+                        $this->{$property} = new $classCast($this->{$property});
+                    }
                 } else {
-                    $this->{$property} = $classCast::hydrate($this->{$property});
+                    if ($this->isHidden($property)) {
+                        $this->hiddenData[$property] = $classCast::hydrate($this->{$property});
+                    } else {
+                        $this->{$property} = $classCast::hydrate($this->{$property});
+                    }
                 }
             }
         }
@@ -60,8 +68,8 @@ trait CastTrait
     public static function hydrate($listParams): array
     {
         $list = [];
-        foreach ($listParams as $arg) {
-            $list[] = new static($arg);
+        foreach ($listParams as $key => $arg) {
+            $list[$key] = new static($arg);
         }
         return $list;
     }
