@@ -4,7 +4,6 @@ namespace SparkleDTO;
 
 use JsonSerializable;
 use SparkleDTO\Exceptions\ConfigurationException;
-use SparkleDTO\Exceptions\UndefinedProperty;
 use SparkleDTO\Traits\AliasTrait;
 use SparkleDTO\Traits\ArrayTrait;
 use SparkleDTO\Traits\CastTrait;
@@ -62,9 +61,6 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
         return $propertyMap;
     }
 
-    /**
-     * @throws UndefinedProperty
-     */
     public function __get($property)
     {
         if (isset($this->data[$property])) {
@@ -73,7 +69,7 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
         if (isset($this->hiddenData[$property])) {
             return $this->hiddenData[$property];
         }
-        throw new UndefinedProperty('Undefined property: ' . $property);
+        return null;
     }
 
     public function __set($property, $value)
@@ -83,12 +79,7 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
         } else if ($this->canBeFilled($property)) {
             $this->data[$property] = $this->castIfPrimitive($property, $value);
         }
-        try {
-            $this->calculateComputedProperties();
-        } catch (UndefinedProperty $e) {
-            // Ignore exception if setting first property
-            // and invoking a computed property
-        }
+        $this->calculateComputedProperties();
     }
 
     /**
@@ -128,5 +119,10 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
     public function jsonSerialize()
     {
         return $this->data;
+    }
+
+    public function hasProperty($propertyName)
+    {
+        return $this->{$propertyName} !== null;
     }
 }

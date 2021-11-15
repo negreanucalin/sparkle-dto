@@ -3,7 +3,6 @@
 namespace SparkleDTO\Tests;
 
 use SparkleDTO\DataTransferObject;
-use SparkleDTO\Exceptions\UndefinedProperty;
 use PHPUnit\Framework\TestCase;
 use SparkleDTO\Tests\Data\DtoRelations;
 use SparkleDTO\Tests\Data\DtoWithAlias;
@@ -34,9 +33,8 @@ class DtoTest extends TestCase
     }
 
     public function test_aliased_exception() {
-        $this->expectException(UndefinedProperty::class);
         $dto = new DtoWithAlias(['a' => 1, 'b' => 2]);
-        $fail = $dto->b; // Exception
+        $this->assertNull($dto->b);
     }
 
     public function test_hydrate()
