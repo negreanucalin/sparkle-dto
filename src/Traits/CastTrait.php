@@ -9,14 +9,39 @@ trait CastTrait
      */
     protected $casts = [];
 
+    private $castMap = [
+        'bool'=>'boolean',
+        'boolean'=>'boolean',
+        'int'=>'int',
+        'integer'=>'int',
+        'array'=>'array',
+        'float'=>'float',
+        'str'=>'string',
+        'string'=>'string',
+    ];
+
+    /**
+     * @param string $propertyName
+     * @param mixed $value
+     * @return mixed
+     */
+    private function castIfPrimitive(string $propertyName, mixed $value): mixed
+    {
+        // Is defined as primitive
+        if (isset($this->casts[$propertyName]) && isset($this->castMap[$this->casts[$propertyName]])) {
+            settype($value, $this->castMap[$this->casts[$propertyName]]);
+        }
+        return $value;
+    }
+
     private function calculateCasts()
     {
-        foreach ($this->casts as $cast => $classCast) {
-            if (is_subclass_of($classCast, self::class) && isset($this->{$cast})) {
-                if ($this->isSingle($this->{$cast})) {
-                    $this->{$cast} = new $classCast($this->{$cast});
+        foreach ($this->casts as $property => $classCast) {
+            if (is_subclass_of($classCast, self::class) && isset($this->data[$property])) {
+                if ($this->isSingle($this->{$property})) {
+                    $this->{$property} = new $classCast($this->{$property});
                 } else {
-                    $this->{$cast} = $classCast::hydrate($this->{$cast});
+                    $this->{$property} = $classCast::hydrate($this->{$property});
                 }
             }
         }

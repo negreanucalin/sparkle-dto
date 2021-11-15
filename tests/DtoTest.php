@@ -6,9 +6,7 @@ use SparkleDTO\DataTransferObject;
 use SparkleDTO\Exceptions\UndefinedProperty;
 use PHPUnit\Framework\TestCase;
 use SparkleDTO\Tests\Data\DtoRelations;
-use SparkleDTO\Tests\Data\DtoRelationUsers;
 use SparkleDTO\Tests\Data\DtoWithAlias;
-use SparkleDTO\Tests\Data\DtoWithAliasComputed;
 use SparkleDTO\Tests\Data\DtoWithFillable;
 
 class DtoTest extends TestCase
@@ -29,11 +27,15 @@ class DtoTest extends TestCase
 
     public function test_aliased()
     {
-        $this->expectException(UndefinedProperty::class);
         $expectedData = ['a' => 1, 'c' => 2];
         $dto = new DtoWithAlias(['a' => 1, 'b' => 2]);
         $this->assertEquals(json_encode($expectedData), (string)$dto);
         $this->assertEquals(2, $dto->c);
+    }
+
+    public function test_aliased_exception() {
+        $this->expectException(UndefinedProperty::class);
+        $dto = new DtoWithAlias(['a' => 1, 'b' => 2]);
         $fail = $dto->b; // Exception
     }
 
@@ -48,60 +50,11 @@ class DtoTest extends TestCase
         $this->assertEquals(json_encode($expectedData), (string)$dto[1]);
     }
 
-    public function test_relations()
-    {
-        $dto = new DtoRelations(['users' => [['name' => 'calin'], ['name' => 'elena']]]);
-        $this->assertTrue(is_array($dto->users));
-        $this->assertTrue(is_array($dto['users']));
-        $this->assertTrue($dto->users[0] instanceof DtoRelationUsers);
-        $this->assertEquals('calin', $dto->users[0]->name);
-    }
-
     public function test_dynamic_set()
     {
         $dto = new DtoRelations(['users' => [['name' => 'calin'], ['name' => 'elena']]]);
         $dto->something = ['x' => 1];
         $this->assertEquals(['x' => 1], $dto->something);
-    }
-
-    public function test_relations_single()
-    {
-        $dto = new DtoRelations(
-            [
-                'users' => [['name' => 'calin'], ['name' => 'elena']],
-                'single' => ['users' => [['name' => 'calin2'], ['name' => 'elena2']]]
-            ]);
-        $this->assertTrue(is_array($dto->users));
-        $this->assertTrue(is_array($dto['users']));
-        $this->assertTrue($dto->users[0] instanceof DtoRelationUsers);
-        $this->assertEquals('calin', $dto->users[0]->name);
-        $this->assertTrue($dto->single instanceof DtoRelations);
-        $this->assertEquals('calin2', $dto->single->users[0]->name);
-    }
-
-    public function test_deep_relations()
-    {
-        $dto = new DtoRelations(
-            [
-                'users' => [
-                    ['name' => 'calin'],
-                    ['name' => 'elena']
-                ],
-                'children' => [
-                    [
-                        'users' => [
-                            ['name' => 'calin2'],
-                            ['name' => 'elena2']
-                        ],
-                        'children' => []
-                    ]
-                ]
-            ]
-        );
-        $this->assertTrue(is_array($dto->children));
-        $this->assertTrue(is_array($dto['children']));
-        $this->assertTrue($dto->children[0]->users[0] instanceof DtoRelationUsers);
-        $this->assertEquals('calin2', $dto->children[0]->users[0]->name);
     }
 
     public function test_fillable_properties()

@@ -4,22 +4,22 @@ namespace SparkleDTO\Traits;
 
 trait ArrayTrait
 {
-    public function offsetExists($offset)
+    public function offsetExists($propertyName)
     {
-        return isset($this->{$offset});
+        return isset($this->data[$propertyName]);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($propertyName)
     {
-        return isset($this->{$offset}) ? $this->{$offset} : null;
+        return isset($this->data[$propertyName]) ? $this->data[$propertyName] : null;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($propertyName, $value)
     {
 
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($propertyName)
     {
 
     }
