@@ -4,7 +4,7 @@ namespace SparkleDTO\Traits;
 
 trait ComputedTrait
 {
-    public function calculateComputedProperties()
+    private function calculateComputedProperties()
     {
         $methods = get_class_methods($this);
         foreach ($methods as $method) {
