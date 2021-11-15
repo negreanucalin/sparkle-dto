@@ -46,9 +46,20 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
     {
         $this->validateConfiguration();
         $this->assignData(
-            $this->getAliasedData($arguments)
+            $this->getAliasedData(
+                $this->appendEmptyFillable($arguments)
+            )
         );
         $this->calculateCasts();
+    }
+
+    private function appendEmptyFillable($propertyMap): array
+    {
+        $difference = array_diff($this->fillable,array_keys($propertyMap));
+        foreach ($difference as $missingKey) {
+            $propertyMap[$missingKey] = '';
+        }
+        return $propertyMap;
     }
 
     /**

@@ -72,4 +72,15 @@ class DtoTest extends TestCase
         $this->assertArrayNotHasKey('prop4', $dto);
         $this->assertArrayNotHasKey('prop5', $dto);
     }
+
+    public function test_fillable_autofill_properties()
+    {
+        $dto = new DtoWithFillable([
+            'something' => 5,
+        ]);
+
+        $this->assertArrayHasKey('prop1', $dto);
+        $this->assertArrayHasKey('prop2', $dto);
+        $this->assertArrayHasKey('prop3', $dto);
+    }
 }
