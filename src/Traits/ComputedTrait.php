@@ -2,6 +2,8 @@
 
 namespace SparkleDTO\Traits;
 
+use Exception;
+
 trait ComputedTrait
 {
     private function calculateComputedProperties()
@@ -12,7 +14,12 @@ trait ComputedTrait
                 $property = $this->toLowerCase(
                     str_replace(['get', 'Attribute'], '', $method)
                 );
-                $this->{$property} = $this->$method();
+                try {
+                    $this->{$property} = $this->$method();
+                } catch (Exception $e) {
+                    // Blank catch because the property
+                    // in dynamic attribute is not yet defined
+                }
             }
         }
     }

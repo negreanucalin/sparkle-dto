@@ -3,6 +3,7 @@
 namespace SparkleDTO\Tests;
 
 use PHPUnit\Framework\TestCase;
+use SparkleDTO\Tests\Data\DtoMapRelations;
 use SparkleDTO\Tests\Data\DtoRelations;
 use SparkleDTO\Tests\Data\DtoRelationUsers;
 
@@ -55,5 +56,31 @@ class DtoRelationsTest extends TestCase
         $this->assertTrue(is_array($dto['children']));
         $this->assertTrue($dto->children[0]->users[0] instanceof DtoRelationUsers);
         $this->assertEquals('calin2', $dto->children[0]->users[0]->name);
+    }
+
+    public function test_deep_map_relations()
+    {
+        $dto = new DtoMapRelations(
+            [
+                'users' => [
+                    'first'=>['name' => 'calin'],
+                    'second'=>['name' => 'elena']
+                ],
+                'children' => [
+                    [
+                        'users' => [
+                            '4th'=>['name' => 'calin2'],
+                            '5th'=>['name' => 'elena2']
+                        ],
+                        'children' => []
+                    ]
+                ]
+            ]
+        );
+        $this->assertTrue(is_array($dto->children));
+        $this->assertTrue(is_array($dto['children']));
+        $this->assertTrue($dto->children[0]->users['4th'] instanceof DtoRelationUsers);
+        $this->assertEquals('calin2', $dto->children[0]->users['4th']->name);
+        $this->assertEquals('calin', $dto->first_user_name);
     }
 }

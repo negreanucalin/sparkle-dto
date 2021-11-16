@@ -34,25 +34,46 @@ trait CastTrait
         return $value;
     }
 
+    /**
+     * Compute casts defined in the DTO
+     * Triggers re-computation of custom getters
+     */
     private function calculateCasts()
     {
         foreach ($this->casts as $property => $classCast) {
-            if (is_subclass_of($classCast, self::class) && isset($this->data[$property])) {
-                if ($this->isSingle($this->{$property})) {
-                    if ($this->isHidden($property)) {
-                        $this->hiddenData[$property] = new $classCast($this->{$property});
-                    } else {
-                        $this->{$property} = new $classCast($this->{$property});
-                    }
+            $isMapCast = $this->isMapCast($property);
+            $property = $this->getProperty($property);
+            if (
+                is_subclass_of($classCast, self::class) // Only children of DTO allowed
+                && isset($this->data[$property])) {
+                if ($this->isSingle($this->{$property}) && !$isMapCast) {
+                    $this->{$property} = new $classCast($this->{$property});
                 } else {
-                    if ($this->isHidden($property)) {
-                        $this->hiddenData[$property] = $classCast::hydrate($this->{$property});
-                    } else {
-                        $this->{$property} = $classCast::hydrate($this->{$property});
-                    }
+                    $this->{$property} = $classCast::hydrate($this->{$property});
                 }
             }
         }
+    }
+
+    /**
+     * Determines if we should hydrate the relation as a map
+     * @param $propertyName
+     * @return bool
+     */
+    public function isMapCast($propertyName)
+    {
+        return $this->startsWith($propertyName, self::CAST_MAP_IDENTIFIER) ||
+            $this->endsWith($propertyName, self::CAST_MAP_IDENTIFIER);
+    }
+
+    /**
+     * Return the property name without the "map" identifier
+     * @param $propertyName
+     * @return array|string
+     */
+    private function getProperty($propertyName)
+    {
+        return str_replace(self::CAST_MAP_IDENTIFIER, "", $propertyName);
     }
 
     /**
@@ -65,6 +86,11 @@ trait CastTrait
         return !isset($relatedData[0]);
     }
 
+    /**
+     * Return a list of DTO's (numeric or string keys a.k.a maps)
+     * @param $listParams
+     * @return array
+     */
     public static function hydrate($listParams): array
     {
         $list = [];

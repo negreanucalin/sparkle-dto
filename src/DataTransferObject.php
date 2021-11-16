@@ -11,8 +11,14 @@ use SparkleDTO\Traits\ComputedTrait;
 use ArrayAccess;
 
 class DataTransferObject implements ArrayAccess, JsonSerializable
-
 {
+    /**
+     * Identifier at the start or end of the string key (casts)
+     * If exists then we try to hydrate a DTO list resulting
+     * in a map which is very useful
+     */
+    const CAST_MAP_IDENTIFIER = "*";
+
     /**
      * @var array
      */
