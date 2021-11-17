@@ -45,7 +45,7 @@ trait CastTrait
             $property = $this->getProperty($property);
             if (
                 is_subclass_of($classCast, self::class) // Only children of DTO allowed
-                && isset($this->data[$property])) {
+                && (isset($this->data[$property]) || isset($this->hiddenData[$property]))) {
                 if ($this->isSingle($this->{$property}) && !$isMapCast) {
                     $this->{$property} = new $classCast($this->{$property});
                 } else {
