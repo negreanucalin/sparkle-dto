@@ -15,7 +15,7 @@ trait ComputedTrait
 
     private function calculateComputedProperties()
     {
-        if (empty($this->classAttributesDefined)) {
+        if (!$this->hasAttributes) {
             return;
         }
         foreach ($this->classAttributesDefined as $method) {
@@ -35,6 +35,7 @@ trait ComputedTrait
         foreach ($methods as $method) {
             if ($this->startsWith($method, 'get') && $this->endsWith($method, 'Attribute')) {
                 $methodList[] = $method;
+                $this->hasAttributes = true;
             }
         }
         return $methodList;
