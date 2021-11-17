@@ -1,10 +1,10 @@
 <?php
 
-namespace SparkleDTO\Tests;
+namespace SparkleDto\Tests;
 
 use PHPUnit\Framework\TestCase;
-use SparkleDTO\Tests\Data\DtoWithAliasComputed;
-use SparkleDTO\Tests\Data\DtoWithComputed;
+use SparkleDto\Tests\Data\DtoWithAliasComputed;
+use SparkleDto\Tests\Data\DtoWithComputed;
 
 class DtoComputedTest extends TestCase
 {

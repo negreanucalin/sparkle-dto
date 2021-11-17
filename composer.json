@@ -10,12 +10,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "SparkleDTO\\": "src/"
+      "SparkleDto\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "SparkleDTO\\Tests\\": "tests/"
+      "SparkleDto\\Tests\\": "tests/"
     }
   },
   "require": {

@@ -1,12 +1,12 @@
 <?php
 
-namespace SparkleDTO\Tests;
+namespace SparkleDto\Tests;
 
-use SparkleDTO\DataTransferObject;
+use SparkleDto\DataTransferObject;
 use PHPUnit\Framework\TestCase;
-use SparkleDTO\Tests\Data\DtoRelations;
-use SparkleDTO\Tests\Data\DtoWithAlias;
-use SparkleDTO\Tests\Data\DtoWithFillable;
+use SparkleDto\Tests\Data\DtoRelations;
+use SparkleDto\Tests\Data\DtoWithAlias;
+use SparkleDto\Tests\Data\DtoWithFillable;
 
 class DtoTest extends TestCase
 {

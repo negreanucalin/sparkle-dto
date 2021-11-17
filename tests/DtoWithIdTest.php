@@ -1,8 +1,8 @@
 <?php
 
-namespace SparkleDTO\Tests;
+namespace SparkleDto\Tests;
 
-use SparkleDTO\DataTransferObjectWithId;
+use SparkleDto\DataTransferObjectWithId;
 use PHPUnit\Framework\TestCase;
 
 class DtoWithIdTest extends TestCase

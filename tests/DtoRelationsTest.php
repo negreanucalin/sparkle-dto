@@ -1,11 +1,11 @@
 <?php
 
-namespace SparkleDTO\Tests;
+namespace SparkleDto\Tests;
 
 use PHPUnit\Framework\TestCase;
-use SparkleDTO\Tests\Data\DtoMapRelations;
-use SparkleDTO\Tests\Data\DtoRelations;
-use SparkleDTO\Tests\Data\DtoRelationUsers;
+use SparkleDto\Tests\Data\DtoMapRelations;
+use SparkleDto\Tests\Data\DtoRelations;
+use SparkleDto\Tests\Data\DtoRelationUsers;
 
 class DtoRelationsTest extends TestCase
 {

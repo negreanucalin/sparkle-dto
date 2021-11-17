@@ -1,9 +1,9 @@
 <?php
 
-namespace SparkleDTO\Tests;
+namespace SparkleDto\Tests;
 
 use PHPUnit\Framework\TestCase;
-use SparkleDTO\Tests\Data\DtoWithCasts;
+use SparkleDto\Tests\Data\DtoWithCasts;
 
 class DtoCastsTest extends TestCase
 {

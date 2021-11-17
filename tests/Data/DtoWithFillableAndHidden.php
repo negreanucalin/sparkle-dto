@@ -1,8 +1,8 @@
 <?php
 
-namespace SparkleDTO\Tests\Data;
+namespace SparkleDto\Tests\Data;
 
-use SparkleDTO\DataTransferObject;
+use SparkleDto\DataTransferObject;
 
 class DtoWithFillableAndHidden extends DataTransferObject
 {

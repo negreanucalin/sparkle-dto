@@ -1,8 +1,8 @@
 <?php
 
-namespace SparkleDTO;
+namespace SparkleDto;
 
-use SparkleDTO\Exceptions\IdGenerationException;
+use SparkleDto\Exceptions\IdGenerationException;
 
 class DataTransferObjectWithId extends DataTransferObject
 {

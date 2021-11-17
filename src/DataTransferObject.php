@@ -1,13 +1,13 @@
 <?php
 
-namespace SparkleDTO;
+namespace SparkleDto;
 
 use JsonSerializable;
-use SparkleDTO\Exceptions\ConfigurationException;
-use SparkleDTO\Traits\AliasTrait;
-use SparkleDTO\Traits\ArrayTrait;
-use SparkleDTO\Traits\CastTrait;
-use SparkleDTO\Traits\ComputedTrait;
+use SparkleDto\Exceptions\ConfigurationException;
+use SparkleDto\Traits\AliasTrait;
+use SparkleDto\Traits\ArrayTrait;
+use SparkleDto\Traits\CastTrait;
+use SparkleDto\Traits\ComputedTrait;
 use ArrayAccess;
 
 class DataTransferObject implements ArrayAccess, JsonSerializable

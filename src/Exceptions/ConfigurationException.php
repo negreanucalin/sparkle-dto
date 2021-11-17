@@ -1,6 +1,6 @@
 <?php
 
-namespace SparkleDTO\Exceptions;
+namespace SparkleDto\Exceptions;
 
 class ConfigurationException extends \Exception
 {

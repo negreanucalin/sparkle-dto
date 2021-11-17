@@ -1,6 +1,6 @@
 <?php
 
-namespace SparkleDTO\Traits;
+namespace SparkleDto\Traits;
 
 trait ArrayTrait
 {

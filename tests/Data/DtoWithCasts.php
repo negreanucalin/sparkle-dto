@@ -1,7 +1,7 @@
 <?php
+namespace SparkleDto\Tests\Data;
 
-namespace SparkleDTO\Tests\Data;
-use SparkleDTO\DataTransferObject;
+use SparkleDto\DataTransferObject;
 
 class DtoWithCasts extends DataTransferObject
 {

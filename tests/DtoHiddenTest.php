@@ -1,12 +1,12 @@
 <?php
 
-namespace SparkleDTO\Tests;
+namespace SparkleDto\Tests;
 
-use SparkleDTO\Exceptions\ConfigurationException;
+use SparkleDto\Exceptions\ConfigurationException;
 use PHPUnit\Framework\TestCase;
-use SparkleDTO\Tests\Data\DtoWithFillableAndHidden;
-use SparkleDTO\Tests\Data\DtoWithHidden;
-use SparkleDTO\Tests\Data\DtoWithUndefinedHidden;
+use SparkleDto\Tests\Data\DtoWithFillableAndHidden;
+use SparkleDto\Tests\Data\DtoWithHidden;
+use SparkleDto\Tests\Data\DtoWithUndefinedHidden;
 
 class DtoHiddenTest extends TestCase
 {
