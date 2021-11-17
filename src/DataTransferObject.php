@@ -39,6 +39,13 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
      */
     protected $fillable = [];
 
+    /**
+     * @var bool
+     */
+    private bool $hasAttributes = false;
+
+    private array $classAttributesDefined = [];
+
     use AliasTrait;
     use CastTrait;
     use ComputedTrait;
@@ -49,6 +56,7 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
      */
     public function __construct($arguments)
     {
+        $this->loadAttributeMethods();
         $this->validateConfiguration();
         $this->assignData(
             $this->getAliasedData(
@@ -56,6 +64,7 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
             )
         );
         $this->calculateCasts();
+        $this->calculateComputedProperties();
     }
 
     private function appendEmptyFillable($propertyMap): array
@@ -71,22 +80,27 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
     {
         $value = null;
         if (isset($this->data[$property])) {
-            $value = $this->data[$property];
+            return $this->data[$property];
         }
         if (isset($this->hiddenData[$property])) {
-            $value = $this->hiddenData[$property];
+            return $this->hiddenData[$property];
         }
         return $value;
     }
 
     public function __set($property, $value)
     {
+        $this->setProperty($property, $value);
+        $this->calculateComputedProperties();
+    }
+
+    private function setProperty($property, $value)
+    {
         if ($this->isHidden($property)) {
             $this->hiddenData[$property] = $this->castIfPrimitive($property, $value);
         } else if ($this->canBeFilled($property)) {
             $this->data[$property] = $this->castIfPrimitive($property, $value);
         }
-        $this->calculateComputedProperties();
     }
 
     /**
@@ -101,9 +115,8 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
 
     private function assignData($data)
     {
-        // Trigger magit method __set() which solves casting
         foreach ($data as $property => $value) {
-            $this->{$property} = $value;
+            $this->setProperty($property, $value);
         }
     }
 
