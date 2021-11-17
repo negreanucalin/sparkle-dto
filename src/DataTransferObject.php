@@ -39,12 +39,9 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
      */
     protected $fillable = [];
 
-    /**
-     * @var bool
-     */
-    private bool $hasAttributes = false;
+    private static $hasAttributesMap;
 
-    private array $classAttributesDefined = [];
+    private static $classAttributesDefined;
 
     use AliasTrait;
     use CastTrait;

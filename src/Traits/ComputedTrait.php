@@ -8,17 +8,17 @@ trait ComputedTrait
 {
     private function loadAttributeMethods()
     {
-        if (empty($this->classAttributesDefined)) {
-            $this->classAttributesDefined = $this->filterComputedMethods(get_class_methods($this));
+        if (empty(self::$classAttributesDefined[$this::class])) {
+            self::$classAttributesDefined[$this::class] = $this->filterComputedMethods(get_class_methods($this));
         }
     }
 
     private function calculateComputedProperties()
     {
-        if (!$this->hasAttributes) {
+        if (!self::$hasAttributesMap[$this::class]) {
             return;
         }
-        foreach ($this->classAttributesDefined as $method) {
+        foreach (self::$classAttributesDefined[$this::class] as $method) {
             $property = $this->toLowerCase(str_replace(['get', 'Attribute'], '', $method));
             try {
                 $this->setProperty($property, $this->$method());
@@ -32,10 +32,11 @@ trait ComputedTrait
     private function filterComputedMethods($methods)
     {
         $methodList = [];
+        self::$hasAttributesMap[$this::class] = false;
         foreach ($methods as $method) {
             if ($this->startsWith($method, 'get') && $this->endsWith($method, 'Attribute')) {
                 $methodList[] = $method;
-                $this->hasAttributes = true;
+                self::$hasAttributesMap[$this::class] = true;
             }
         }
         return $methodList;

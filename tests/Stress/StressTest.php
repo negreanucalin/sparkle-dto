@@ -54,4 +54,28 @@ class StressTest extends TestCase
 
         $this->assertEquals(50000, $i);
     }
+
+    public function test_20k_instances()
+    {
+        for($i=0;$i<20000;$i++) {
+            $dto = new DtoMapRelations(
+                [
+                    'users' => [
+                        'first' => ['name' => 'calin'],
+                        'second' => ['name' => 'elena']
+                    ],
+                    'children' => [
+                        [
+                            'users' => [
+                                '4th' => ['name' => 'calin2'],
+                                '5th' => ['name' => 'elena2']
+                            ]
+                        ]
+                    ]
+                ]
+            );
+        }
+
+        $this->assertEquals(20000, $i);
+    }
 }
