@@ -1,6 +1,6 @@
 <?php
 
-namespace SparkleDto\Tests;
+namespace SparkleDto\Tests\Unit;
 
 use SparkleDto\DataTransferObjectWithId;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +19,8 @@ class DtoWithIdTest extends TestCase
         $this->assertEquals(1, $dto->a);
         $this->assertEquals(2, $dto->b);
         $this->assertArrayHasKey('id', $dto);
+        $this->assertIsString($dto['id']);
+        $this->assertIsString($dto->id);
         $this->assertArrayHasKey('a', $dto);
         $this->assertArrayHasKey('b', $dto);
     }

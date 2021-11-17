@@ -1,6 +1,6 @@
 <?php
 
-namespace SparkleDto\Tests;
+namespace SparkleDto\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use SparkleDto\Tests\Data\DtoWithCasts;
