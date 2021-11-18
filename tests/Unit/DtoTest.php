@@ -1,6 +1,6 @@
 <?php
 
-namespace SparkleDto\Tests;
+namespace SparkleDto\Tests\Unit;
 
 use SparkleDto\DataTransferObject;
 use PHPUnit\Framework\TestCase;

@@ -2,6 +2,8 @@
 
 namespace SparkleDto\Traits;
 
+use SparkleDto\AttributeCacheClass;
+
 trait CastTrait
 {
     /**
@@ -44,7 +46,7 @@ trait CastTrait
             $isMapCast = $this->isMapCast($property);
             $property = $this->getProperty($property);
             if (
-                is_subclass_of($classCast, self::class) // Only children of DTO allowed
+                AttributeCacheClass::isSubclassOf($classCast, self::class) // Only children of DTO allowed
                 && (isset($this->data[$property]) || isset($this->hiddenData[$property]))) {
                 if ($this->isSingle($this->{$property}) && !$isMapCast) {
                     $this->{$property} = new $classCast($this->{$property});
