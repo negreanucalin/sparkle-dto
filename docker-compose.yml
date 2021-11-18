@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+    sparkle-dto-dev:
+        container_name: sparkle-dto-dev
+        build:
+            context: .
+            dockerfile: .Dockerfile
+        environment:
+            - FPM_PM_MAX_CHILDREN=10
+            - XDEBUG_MODE=profile
+        volumes:
+            - ./:/var/www/sparkle-dto
+            - type: "bind"
+              source: "../xdebug-output-sparkle"
+              target: "/tmp/xdebug-output-sparkle"

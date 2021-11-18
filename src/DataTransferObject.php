@@ -39,10 +39,6 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
      */
     protected $fillable = [];
 
-    private static $hasAttributesMap;
-
-    private static $classAttributesDefined;
-
     use AliasTrait;
     use CastTrait;
     use ComputedTrait;
@@ -125,7 +121,7 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
 
     private function canBeFilled($property): bool
     {
-        return (count($this->fillable) && in_array($property, $this->fillable)) || empty($this->fillable);
+        return empty($this->fillable) || in_array($property, $this->fillable);
     }
 
     public function __toString()
