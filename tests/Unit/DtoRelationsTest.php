@@ -4,8 +4,10 @@ namespace SparkleDto\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use SparkleDto\Tests\Data\DtoMapRelations;
+use SparkleDto\Tests\Data\DtoMapRelationsAlias;
 use SparkleDto\Tests\Data\DtoRelations;
 use SparkleDto\Tests\Data\DtoRelationUsers;
+use SparkleDto\Tests\Data\DtoRelationUsersAlias;
 
 class DtoRelationsTest extends TestCase
 {
@@ -63,14 +65,14 @@ class DtoRelationsTest extends TestCase
         $dto = new DtoMapRelations(
             [
                 'users' => [
-                    'first'=>['name' => 'calin'],
-                    'second'=>['name' => 'elena']
+                    'first' => ['name' => 'calin'],
+                    'second' => ['name' => 'elena']
                 ],
                 'children' => [
                     [
                         'users' => [
-                            '4th'=>['name' => 'calin2'],
-                            '5th'=>['name' => 'elena2']
+                            '4th' => ['name' => 'calin2'],
+                            '5th' => ['name' => 'elena2']
                         ],
                         'children' => []
                     ]
@@ -82,5 +84,34 @@ class DtoRelationsTest extends TestCase
         $this->assertTrue($dto->children[0]->users['4th'] instanceof DtoRelationUsers);
         $this->assertEquals('calin2', $dto->children[0]->users['4th']->name);
         $this->assertEquals('calin', $dto->first_user_name);
+    }
+
+    public function test_deep_map_relations_alias()
+    {
+        $dto = new DtoMapRelationsAlias(
+            [
+                'users' => [
+                    'first' => ['name' => 'calin'],
+                    'second' => ['name' => 'elena']
+                ],
+                'children' => [
+                    [
+                        'users' => [
+                            '4th' => ['name' => 'calin2'],
+                            '5th' => ['name' => 'elena2']
+                        ],
+                        'children' => []
+                    ]
+                ]
+            ]
+        );
+        $this->assertTrue(is_array($dto->users));
+        $this->assertTrue(is_array($dto['users']));
+        $this->assertTrue($dto->users['first'] instanceof DtoRelationUsersAlias);
+        $this->assertEquals('calin', $dto->users['first']->short_name);
+        $this->assertEquals('elena', $dto->users['second']->short_name);
+
+        $this->assertTrue($dto->children[0]->users['4th'] instanceof DtoRelationUsersAlias);
+        $this->assertEquals('calin2', $dto->children[0]->users['4th']->short_name);
     }
 }
