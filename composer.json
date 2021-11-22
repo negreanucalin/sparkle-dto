@@ -10,11 +10,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "SparkleDto\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
+      "SparkleDto\\": "src/",
       "SparkleDto\\Tests\\": "tests/"
     }
   },
