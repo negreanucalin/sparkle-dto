@@ -12,5 +12,4 @@ jobs:
         uses: php-actions/phpunit@v3
         with:
           configuration: phpunit.xml
-          bootstrap: vendor/autoload.php
           args: --coverage-clover=coverage.xml

@@ -18,10 +18,19 @@
       "SparkleDto\\Tests\\": "tests/"
     }
   },
+  "scripts": {
+    "test": [
+      "phpunit --colors=always"
+    ]
+  },
+  "scripts-descriptions": {
+    "test": "Run PHPUnit tests."
+  },
   "require": {
     "php": ">=7.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "9.5.10"
+    "phpunit/phpunit": "9.5.10",
+    "phpunit/php-code-coverage": "9.2.9"
   }
 }
