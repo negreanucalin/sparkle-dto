@@ -13,4 +13,3 @@ jobs:
         with:
           configuration: phpunit.xml
           bootstrap: vendor/autoload.php
-          args: --coverage-text
