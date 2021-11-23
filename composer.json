@@ -18,6 +18,14 @@
       "SparkleDto\\Tests\\": "tests/"
     }
   },
+  "scripts": {
+    "test": [
+      "phpunit --colors=always"
+    ]
+  },
+  "scripts-descriptions": {
+    "test": "Run PHPUnit tests."
+  },
   "require": {
     "php": ">=7.0"
   },
