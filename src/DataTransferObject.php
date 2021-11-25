@@ -39,6 +39,12 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
      */
     protected $fillable = [];
 
+    /**
+     * List of properties that need to be cast as dates
+     * @var array
+     */
+    protected $dates = [];
+
     use AliasTrait;
     use CastTrait;
     use ComputedTrait;
@@ -91,8 +97,10 @@ class DataTransferObject implements ArrayAccess, JsonSerializable
     {
         if ($this->isHidden($property)) {
             $this->hiddenData[$property] = $this->castIfPrimitive($property, $value);
+            $this->hiddenData[$property] = $this->castIfClass($property, $this->hiddenData[$property]);
         } else if ($this->canBeFilled($property)) {
             $this->data[$property] = $this->castIfPrimitive($property, $value);
+            $this->data[$property] = $this->castIfClass($property, $this->data[$property]);
         }
     }
 

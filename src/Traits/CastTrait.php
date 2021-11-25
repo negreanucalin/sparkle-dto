@@ -2,6 +2,7 @@
 
 namespace SparkleDto\Traits;
 
+use Carbon\Carbon;
 use SparkleDto\AttributeCacheClass;
 
 trait CastTrait
@@ -11,6 +12,21 @@ trait CastTrait
      */
     protected $casts = [];
 
+    /**
+     * Cast map of custom conversions
+     *
+     * @var string[]
+     */
+    private $castClassMap = [
+        'datetime' => Carbon::class,
+        'date' => Carbon::class,
+    ];
+
+    /**
+     * Primitive cast map
+     *
+     * @var string[]
+     */
     private $castMap = [
         'bool' => 'boolean',
         'boolean' => 'boolean',
@@ -32,6 +48,29 @@ trait CastTrait
         // Is defined as primitive
         if (isset($this->casts[$propertyName]) && isset($this->castMap[$this->casts[$propertyName]])) {
             settype($value, $this->castMap[$this->casts[$propertyName]]);
+        }
+        return $value;
+    }
+
+    /**
+     * Cast if property defined as "datetime" or
+     * if the property is in the list of $this->>dates
+     * @param string $propertyName
+     * @param mixed $value
+     * @return mixed
+     * @see $dates
+     */
+    private function castIfClass(string $propertyName, mixed $value): mixed
+    {
+        if (empty($value)) {
+            return $value;
+        }
+        if (isset($this->casts[$propertyName]) && isset($this->castClassMap[$this->casts[$propertyName]])) {
+            $className = $this->castClassMap[$this->casts[$propertyName]];
+            return new $className($value);
+        }
+        if (in_array($propertyName, $this->dates)) {
+            return new Carbon($value);
         }
         return $value;
     }

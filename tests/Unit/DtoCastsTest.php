@@ -2,8 +2,10 @@
 
 namespace SparkleDto\Tests\Unit;
 
+use Carbon\CarbonInterface;
 use PHPUnit\Framework\TestCase;
 use SparkleDto\Tests\Data\DtoWithCasts;
+use SparkleDto\Tests\Data\DtoWithDateCasts;
 
 class DtoCastsTest extends TestCase
 {
@@ -49,5 +51,17 @@ class DtoCastsTest extends TestCase
         $this->assertEquals(122, $dto->a);
         $this->assertIsBool($dto->d);
         $this->assertTrue($dto->d);
+    }
+
+    public function test_datetime_cast()
+    {
+        $dto = new DtoWithDateCasts([
+            'a'=>'2021-01-18 12:00:00',
+            'g'=>'2021-01-18 13:00:00',
+        ]);
+        $this->assertInstanceOf(CarbonInterface::class, $dto->g);
+        $this->assertInstanceOf(CarbonInterface::class, $dto->a);
+        $this->assertIsString(CarbonInterface::class, $dto['g']);
+        $this->assertIsString(CarbonInterface::class, $dto['a']);
     }
 }
