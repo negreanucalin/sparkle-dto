@@ -5,6 +5,7 @@ namespace SparkleDto\Tests\Unit;
 use Carbon\CarbonInterface;
 use PHPUnit\Framework\TestCase;
 use SparkleDto\Tests\Data\DtoWithCasts;
+use SparkleDto\Tests\Data\DtoWithCustomCasts;
 use SparkleDto\Tests\Data\DtoWithDateCasts;
 
 class DtoCastsTest extends TestCase
@@ -57,11 +58,26 @@ class DtoCastsTest extends TestCase
     {
         $dto = new DtoWithDateCasts([
             'a'=>'2021-01-18 12:00:00',
-            'g'=>'2021-01-18 13:00:00',
+            'date2'=>'2021-01-18 13:00:00',
         ]);
-        $this->assertInstanceOf(CarbonInterface::class, $dto->g);
+        $this->assertInstanceOf(CarbonInterface::class, $dto->date2);
         $this->assertInstanceOf(CarbonInterface::class, $dto->a);
-        $this->assertIsString(CarbonInterface::class, $dto['g']);
+        $this->assertIsString(CarbonInterface::class, $dto['date2']);
         $this->assertIsString(CarbonInterface::class, $dto['a']);
+    }
+
+    public function test_custom_cast()
+    {
+        $dto = new DtoWithCustomCasts([
+            'a'=>'yes',
+            'b'=>'no',
+            'c'=>''
+        ]);
+        $this->assertIsBool($dto->a);
+        $this->assertIsBool($dto->b);
+        $this->assertIsNotBool($dto->c);
+        $this->assertTrue($dto->a);
+        $this->assertFalse($dto->b);
+        $this->assertNull($dto->c);
     }
 }

@@ -4,6 +4,7 @@ namespace SparkleDto\Traits;
 
 use Carbon\Carbon;
 use SparkleDto\AttributeCacheClass;
+use SparkleDto\Casts\Cast;
 
 trait CastTrait
 {
@@ -13,32 +14,6 @@ trait CastTrait
     protected $casts = [];
 
     /**
-     * Cast map of custom conversions
-     *
-     * @var string[]
-     */
-    private $castClassMap = [
-        'datetime' => Carbon::class,
-        'date' => Carbon::class,
-    ];
-
-    /**
-     * Primitive cast map
-     *
-     * @var string[]
-     */
-    private $castMap = [
-        'bool' => 'boolean',
-        'boolean' => 'boolean',
-        'int' => 'int',
-        'integer' => 'int',
-        'array' => 'array',
-        'float' => 'float',
-        'str' => 'string',
-        'string' => 'string',
-    ];
-
-    /**
      * @param string $propertyName
      * @param mixed $value
      * @return mixed
@@ -46,15 +21,15 @@ trait CastTrait
     private function castIfPrimitive(string $propertyName, mixed $value): mixed
     {
         // Is defined as primitive
-        if (isset($this->casts[$propertyName]) && isset($this->castMap[$this->casts[$propertyName]])) {
-            settype($value, $this->castMap[$this->casts[$propertyName]]);
+        if (is_string($this->casts[$propertyName]) && isset($this->casts[$propertyName]) &&  isset(Cast::$castMap[$this->casts[$propertyName]])) {
+            settype($value, Cast::$castMap[$this->casts[$propertyName]]);
         }
         return $value;
     }
 
     /**
      * Cast if property defined as "datetime" or
-     * if the property is in the list of $this->>dates
+     * if the property is in the list of $this->dates
      * @param string $propertyName
      * @param mixed $value
      * @return mixed
@@ -65,8 +40,8 @@ trait CastTrait
         if (empty($value)) {
             return $value;
         }
-        if (isset($this->casts[$propertyName]) && isset($this->castClassMap[$this->casts[$propertyName]])) {
-            $className = $this->castClassMap[$this->casts[$propertyName]];
+        if (is_string($this->casts[$propertyName]) && isset($this->casts[$propertyName]) && isset(Cast::$castClassMap[$this->casts[$propertyName]])) {
+            $className = Cast::$castClassMap[$this->casts[$propertyName]];
             return new $className($value);
         }
         if (in_array($propertyName, $this->dates)) {
@@ -85,6 +60,7 @@ trait CastTrait
             $isMapCast = $this->isMapCast($property);
             $property = $this->getProperty($property);
             if (
+                is_string($classCast) &&
                 AttributeCacheClass::isSubclassOf($classCast, self::class) // Only children of DTO allowed
                 && (isset($this->data[$property]) || isset($this->hiddenData[$property]))) {
                 if ($this->isSingle($this->{$property}) && !$isMapCast) {
@@ -92,6 +68,9 @@ trait CastTrait
                 } else {
                     $this->{$property} = $classCast::hydrate($this->{$property});
                 }
+            }
+            else if (is_array($classCast) && count($classCast) == 2) {
+                $this->{$property} = call_user_func_array($classCast[0].'::'.$classCast[1], array($this->{$property}, $this->data));
             }
         }
     }

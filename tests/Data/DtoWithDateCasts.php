@@ -6,10 +6,10 @@ use SparkleDto\DataTransferObject;
 class DtoWithDateCasts extends DataTransferObject
 {
     protected $casts = [
-        'g'=>'datetime',
+        'date2'=>'datetime',
     ];
 
     protected $dates = [
-        'a',
+        'a'
     ];
 }

@@ -10,4 +10,9 @@ class DtoWithComputed extends DataTransferObject
     {
         return $this->a . $this->b;
     }
+
+    public function getSomeName2Attribute(): string
+    {
+        return $this->b . $this->a;
+    }
 }
