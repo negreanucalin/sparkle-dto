@@ -21,7 +21,7 @@ trait CastTrait
     private function castIfPrimitive(string $propertyName, mixed $value): mixed
     {
         // Is defined as primitive
-        if (is_string($this->casts[$propertyName]) && isset($this->casts[$propertyName]) &&  isset(Cast::$castMap[$this->casts[$propertyName]])) {
+        if (isset($this->casts[$propertyName]) && is_string($this->casts[$propertyName]) && isset(Cast::$castMap[$this->casts[$propertyName]])) {
             settype($value, Cast::$castMap[$this->casts[$propertyName]]);
         }
         return $value;
@@ -40,7 +40,7 @@ trait CastTrait
         if (empty($value)) {
             return $value;
         }
-        if (is_string($this->casts[$propertyName]) && isset($this->casts[$propertyName]) && isset(Cast::$castClassMap[$this->casts[$propertyName]])) {
+        if (isset($this->casts[$propertyName]) && is_string($this->casts[$propertyName]) && isset(Cast::$castClassMap[$this->casts[$propertyName]])) {
             $className = Cast::$castClassMap[$this->casts[$propertyName]];
             return new $className($value);
         }
